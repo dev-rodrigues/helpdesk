@@ -7,8 +7,15 @@ import { HeaderComponent } from './components/header/header.component';
 import { MenuComponent } from './components/menu/menu.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { HomeComponent } from './components/home/home.component';
-import { LoginComponent } from './components/login/login.component';
+
 import { routes } from './app.routes';
+import { UserService } from './services/user.service';
+import { SharedService } from './services/shared.service';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+import { AuthInterceptor } from './components/security/login/auth.interceptor';
+import { LoginComponent } from './components/security/login/login.component';
+import { AuthGuard } from './components/security/auth.guard';
 
 @NgModule({
   declarations: [
@@ -21,10 +28,21 @@ import { routes } from './app.routes';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    routes
+    FormsModule,
+    HttpClientModule,
+    routes,
+    
   ],
-  providers: [],
+  providers: [
+    UserService,
+    SharedService,
+    AuthGuard,
+    {
+      provide : HTTP_INTERCEPTORS,
+      useClass : AuthInterceptor,
+      multi : true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
